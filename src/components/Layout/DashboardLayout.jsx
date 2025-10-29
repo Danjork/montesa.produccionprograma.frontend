@@ -4,11 +4,24 @@ import Header from './Header';
 
 export default function DashboardLayout() {
   return (
-    <div className="d-flex flex-column" style={{ minHeight: '100vh' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
+      {/* Header fijo en la parte superior */}
       <Header />
-      <div className="d-flex flex-grow-1">
+      
+      {/* Contenedor con Sidebar y contenido */}
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+        {/* Sidebar fijo a la izquierda */}
         <Sidebar />
-        <main className="flex-grow-1 p-4 bg-white">
+        
+        {/* Área de contenido con scroll */}
+        <main 
+          style={{ 
+            flex: 1, 
+            overflowY: 'auto', 
+            backgroundColor: '#f8f9fa',
+            padding: 0
+          }}
+        >
           <Outlet />
         </main>
       </div>

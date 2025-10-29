@@ -70,41 +70,8 @@ export default function Filters({ onSearch }) {
             />
           </div>
 
-          {/* Cliente */}
-          <div className="col-md-2">
-            <label className="form-label">Cliente</label>
-            <input 
-              type="text" 
-              className="form-control" 
-              placeholder="Cliente"
-              value={cliente}
-              onChange={(e) => setCliente(e.target.value)}
-            />
-          </div>
-
-          {/* Fecha vencimiento */}
-          <div className="col-md-2">
-            <label className="form-label">Fecha vencimiento</label>
-            <select className="form-select">
-              <option>Desde</option>
-              <option>Hasta</option>
-            </select>
-          </div>
-
-          {/* Maquina */}
-          <div className="col-md-2">
-            <label className="form-label">Maquina</label>
-            <select 
-              className="form-select"
-              value={maquina}
-              onChange={(e) => setMaquina(e.target.value)}
-            >
-              <option value="">Seleccionar</option>
-              <option value="Extrusora 9">Extrusora 9</option>
-              <option value="Selladora FMC">Selladora FMC</option>
-              <option value="Mezcladora">Mezcladora</option>
-            </select>
-          </div>
+      
+     
 
           {/* Botón Buscar */}
           <div className="col-md-2 d-flex align-items-end">
@@ -112,31 +79,31 @@ export default function Filters({ onSearch }) {
               Buscar OP/NV
             </button>
           </div>
+
+           {/* Botón Buscar */}
+          <div className="col-md-2 d-flex align-items-end">
+            <button type="submit" className="btn btn-success w-100">
+              Planificar
+            </button>
+          </div>
+
+
         </div>
 
         {/* Segunda fila de filtros */}
         <div className="row g-3 mt-3">
           <div className="col-md-2">
-            <label className="form-label">Maquina</label>
-            <select className="form-select">
-              <option>Buscar</option>
-            </select>
+          
           </div>
 
-          <div className="col-md-3">
-            <label className="form-label">Estado</label>
-            <select className="form-select">
-              <option>Solicitado</option>
-              <option>En Proceso</option>
-              <option>Completado</option>
-            </select>
-          </div>
-
+     
+          {/* Botón Buscar 
           <div className="col-md-7 d-flex gap-2 align-items-end">
             <span className="badge bg-success">Solicitado</span>
             <span className="badge bg-warning text-dark">Medido</span>
             <span className="badge bg-danger">Altal</span>
           </div>
+          */}
         </div>
       </form>
     </div>

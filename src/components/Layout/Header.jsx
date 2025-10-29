@@ -3,7 +3,7 @@ export default function Header() {
     <header className="navbar navbar-dark bg-dark px-4 py-2">
       <div className="container-fluid">
         <a className="navbar-brand" href="/">
-          <strong>Company name</strong>
+          <strong>Mi Empresa</strong>
         </a>
         <div className="d-flex">
           <button className="btn btn-outline-light btn-sm me-2">Share</button>

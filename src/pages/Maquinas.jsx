@@ -49,7 +49,7 @@ export default function Dashboard() {
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h1>Consulta y Carga de Órdenes a Programa Producción</h1>
-     
+      
       </div>
 
       {/* Filtros - Pasar función handleSearch */}
