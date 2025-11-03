@@ -6,6 +6,7 @@ export default function Sidebar() {
 
   const menuItems = [
     { path: '/dashboard', icon: <MdDashboard />, label: 'Dashboard' },
+     { path: '/carga', icon: <MdDashboard />, label: 'Carga' },
     {path: '/maquinas', icon: <MdInventory  />, label:'Maquinas'},
     { path: '/orders', icon: '📋', label: 'Orders' },
     { path: '/products', icon: '🛒', label: 'Products' },

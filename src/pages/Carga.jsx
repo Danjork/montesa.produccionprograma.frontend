@@ -1,29 +1,18 @@
 import { useEffect, useState } from 'react';
 import api from '../services/api';
 import Filters from '../components/Filtros';
-import FiltroMaquina from '../components/FiltroMaquina';
 import DataTable from '../components/DataTable';
 
-export default function Dashboard() {
+export default function Carga() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // Carga inicial de datos (opcional)
-    fetchData();
+    //fetchData();
   }, []);
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const response = await api.get('/Prod_Programa', { params: { top: 100 } });
-      setData(response.data);
-    } catch (error) {
-      console.error('Error al cargar datos', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+
 
   // Función de búsqueda que será llamada desde Filters
   const handleSearch = async (searchParams) => {
@@ -49,12 +38,12 @@ export default function Dashboard() {
      <div className="p-4" style={{ width: '100%' }}>
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1>Maquina</h1>
-      
+        <h1>Consulta y Carga de Órdenes a Programa Producción</h1>
+     
       </div>
 
-      {/* Filtros-Components - Pasar función handleSearch */}
-      <FiltroMaquina onSearch={handleSearch} />
+      {/* Filtros - Pasar función handleSearch */}
+      <Filters onSearch={handleSearch} />
 
       {/* Loading indicator */}
       {loading && (
@@ -65,7 +54,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Tabla */}
+      {/* Tabla - AQUI SE LLAMA AL COMPONENTE DATATABLE*/}
       {!loading && <DataTable data={data} />}
 
       {/* Paginación y botones inferiores */}

@@ -6,6 +6,7 @@ import Orders from './pages/Orders';
 import Products from './pages/Products';
 import Maquinas from './pages/Maquinas';
 import Reports from './pages/Reports';
+import Carga from './pages/Carga';
 
 
 function App() {
@@ -14,7 +15,7 @@ function App() {
        <Route path="/" element={<DashboardLayout />}>
         <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
-        
+        <Route path="carga" element={<Carga />} />
         <Route path="orders" element={<Orders />} />
         <Route path="products" element={<Products />} />
         <Route path="maquinas" element={<Maquinas />} />

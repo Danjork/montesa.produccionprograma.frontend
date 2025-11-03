@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default function Filters({ onSearch }) {
+export default function FiltroMaquina({ onSearch }) {
   const [tipo, setTipo] = useState('OP');
   const [numero, setNumero] = useState('');
   const [cliente, setCliente] = useState('');
@@ -26,7 +26,7 @@ export default function Filters({ onSearch }) {
   return (
     
     <div className="card mb-4 p-4">
-      <label>Componente FILTRO</label>
+      <label>Componente FILTRO Maquina</label>
       <form onSubmit={handleSearch}>
         <div className="row g-3">
           {/* Tipo: OP o NV */}
@@ -38,29 +38,79 @@ export default function Filters({ onSearch }) {
                   className="form-check-input" 
                   type="radio" 
                   name="tipo" 
-                  id="op" 
-                  value="OP" 
-                  checked={tipo === 'OP'}
+                  id="ex" 
+                  value="EX" 
+                  checked={tipo === 'EX'}
                   onChange={(e) => setTipo(e.target.value)}
                 />
-                <label className="form-check-label" htmlFor="op">OP</label>
+                <label className="form-check-label" htmlFor="op">Extrusión</label>
               </div>
+
               <div className="form-check">
                 <input 
                   className="form-check-input" 
                   type="radio" 
                   name="tipo" 
-                  id="nv" 
-                  value="NV"
-                  checked={tipo === 'NV'}
+                  id="im" 
+                  value="IM"
+                  checked={tipo === 'IM'}
                   onChange={(e) => setTipo(e.target.value)}
                 />
-                <label className="form-check-label" htmlFor="nv">NV</label>
+                <label className="form-check-label" htmlFor="nv">Impresión</label>
               </div>
+
+              <div className="form-check">
+                <input 
+                  className="form-check-input" 
+                  type="radio" 
+                  name="tipo" 
+                  id="co" 
+                  value="CO"
+                  checked={tipo === 'CO'}
+                  onChange={(e) => setTipo(e.target.value)}
+                />
+                <label className="form-check-label" htmlFor="nv">Corte</label>
+              </div>
+
+                 <div className="form-check">
+                <input 
+                  className="form-check-input" 
+                  type="radio" 
+                  name="tipo" 
+                  id="se" 
+                  value="SE"
+                  checked={tipo === 'SE'}
+                  onChange={(e) => setTipo(e.target.value)}
+                />
+                <label className="form-check-label" htmlFor="nv">Sellado</label>
+              </div>
+
+                  <div className="form-check">
+                <input 
+                  className="form-check-input" 
+                  type="radio" 
+                  name="tipo" 
+                  id="la" 
+                  value="LA"
+                  checked={tipo === 'LA'}
+                  onChange={(e) => setTipo(e.target.value)}
+                />
+                <label className="form-check-label" htmlFor="nv">Laminado</label>
+              </div>
+
             </div>
           </div>
 
-          {/* Número */}
+      
+      
+     
+
+        
+
+
+        </div>
+
+            {/* Número */}
           <div className="col-md-2">
             <label className="form-label">Número</label>
             <input 
@@ -72,10 +122,12 @@ export default function Filters({ onSearch }) {
             />
           </div>
 
-      
-     
 
-          {/* Botón Buscar */}
+
+
+        {/* Segunda fila de filtros */}
+
+              {/* Botón Buscar */}
           <div className="col-md-2 d-flex align-items-end">
             <button type="submit" className="btn btn-primary w-100">
               Buscar OP/NV
@@ -90,22 +142,19 @@ export default function Filters({ onSearch }) {
           </div>
 
 
-        </div>
-
-        {/* Segunda fila de filtros */}
         <div className="row g-3 mt-3">
           <div className="col-md-2">
           
           </div>
 
      
-          {/* Botón Buscar 
+          {/* Botón Buscar */}
           <div className="col-md-7 d-flex gap-2 align-items-end">
             <span className="badge bg-success">Solicitado</span>
-            <span className="badge bg-warning text-dark">Medido</span>
+            
             <span className="badge bg-danger">Altal</span>
           </div>
-          */}
+          
         </div>
       </form>
     </div>

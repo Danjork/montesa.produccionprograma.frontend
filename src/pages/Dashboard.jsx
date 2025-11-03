@@ -9,9 +9,10 @@ export default function Dashboard() {
 
   useEffect(() => {
     // Carga inicial de datos (opcional)
-    fetchData();
+    //fetchData();
   }, []);
 
+  {/* Aqui se llama a la consulta directo
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -23,6 +24,7 @@ export default function Dashboard() {
       setLoading(false);
     }
   };
+  */}
 
   // Función de búsqueda que será llamada desde Filters
   const handleSearch = async (searchParams) => {
@@ -64,7 +66,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Tabla */}
+      {/* Tabla - AQUI SE LLAMA AL COMPONENTE DATATABLE*/}
       {!loading && <DataTable data={data} />}
 
       {/* Paginación y botones inferiores */}
