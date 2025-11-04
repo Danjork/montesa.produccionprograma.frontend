@@ -1,85 +1,203 @@
-import { useEffect, useState } from 'react';
+// Filtros, KPIs y Tabla en Dashboard.jsx
+import React, { useEffect, useState } from 'react';
 import api from '../services/api';
-import Filters from '../components/Filtros';
-import DataTable from '../components/DataTable';
+import SelectMaquina from '../components/SelectMaquina';
 
 export default function Dashboard() {
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [kpi, setKpi] = useState({ solicitado: 0, programado: 0, reportado: 0, faltante: 0 });
+  const [query, setQuery] = useState('');
+  const [selectedMachine, setSelectedMachine] = useState('Todas');
+  const [onlyLate, setOnlyLate] = useState(false);
+  const [maquinas, setMaquinas] = useState([]);
 
   useEffect(() => {
-    // Carga inicial de datos (opcional)
-    //fetchData();
+    fetchData();
   }, []);
 
-  {/* Aqui se llama a la consulta directo
+  // Puedes llenar los KPIs y el filtro desde tu API sin problema
   const fetchData = async () => {
-    try {
-      setLoading(true);
-      const response = await api.get('/Prod_Programa', { params: { top: 100 } });
-      setData(response.data);
-    } catch (error) {
-      console.error('Error al cargar datos', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  */}
+    const response = await api.get('/Prod_Programa', { params: { top: 200 } });
+    setData(response.data);
 
-  // Función de búsqueda que será llamada desde Filters
-  const handleSearch = async (searchParams) => {
-    try {
-      setLoading(true);
-      
-      // Llamada POST al endpoint de búsqueda
-      const response = await api.post('/Prod_Programa/buscar-sp', {
-        ordNo: searchParams.ordNo
-      });
-      
-      setData(response.data);
-      console.log('Búsqueda exitosa:', response.data);
-    } catch (error) {
-      console.error('Error al buscar:', error);
-      alert('Error al buscar la orden. Verifique el número e intente nuevamente.');
-    } finally {
-      setLoading(false);
-    }
+    const maquinasUnicas = Array.from(new Set(response.data.map(item => item.maquina).filter(Boolean))).sort();
+    setMaquinas(maquinasUnicas);
+
+    // Calcula los KPIs usando los datos (debes ajustar nombres según tu API)
+    let solicitado = 0, programado = 0, reportado = 0, faltante = 0;
+    response.data.forEach(item => {
+      solicitado += +item.solicitado || 0;
+      programado += +item.programado || 0;
+      reportado += +item.reportado || 0;
+      faltante += +item.faltante || 0;
+    });
+    setKpi({ solicitado, programado, reportado, faltante });
   };
+
+  const handleSearch = (e) => {
+    setQuery(e.target.value);
+  };
+
+  const filteredData = data.filter(item =>
+    (query === '' || item.cliente?.toLowerCase().includes(query.toLowerCase()) ||
+      item.op?.toString().includes(query) ||
+      item.codigo?.toLowerCase().includes(query.toLowerCase())) &&
+    (selectedMachine === 'Todas' || item.maquina === selectedMachine) &&
+    (!onlyLate || (item.faltante > 0 && item.vencimiento && new Date(item.vencimiento) < new Date()))
+  );
 
   return (
-     <div className="p-4" style={{ width: '100%' }}>
-      {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1>Consulta y Carga de Órdenes a Programa Producción</h1>
-     
+    <div style={{ padding: '2rem' }}>
+      <h1>Programa de Producción • Dashboard</h1>
+      <p className="text-muted mb-4">Vista rápida de OPs por máquina, vencimientos y estado.</p>
+
+      {/* Filtros principales */}
+      <div className="row g-3 align-items-end mb-4">
+        <div className="col-md-4">
+          <input
+            className="form-control"
+            placeholder="Buscar por Cliente / OP / Código..."
+            value={query}
+            onChange={handleSearch}
+          />
+        </div>
+        {/*   <div className="col-md-4">
+          <select className="form-select" value={selectedMachine} onChange={e => setSelectedMachine(e.target.value)}>
+            <option>Todas las máquinas</option>
+            <option>Extrusora 1</option>
+            <option>Extrusora 12</option>
+            <option>Extrusora 11</option>
+          </select>
+        </div>*/}
+
+
+        <div className="col-md-4">
+          <SelectMaquina
+            maquinas={maquinas}
+            selected={selectedMachine}
+            onChange={e => setSelectedMachine(e.target.value)}
+          />
+        </div>
+        <div className="col-auto">
+          <input
+            type="checkbox"
+            checked={onlyLate}
+            onChange={e => setOnlyLate(e.target.checked)}
+            className="form-check-input me-2"
+            id="onlyLate"
+          />
+          <label className="form-check-label" htmlFor="onlyLate">Solo vencidas</label>
+        </div>
+        <div className="col-auto">
+          <button className="btn btn-outline-secondary me-2" onClick={() => { setQuery(''); setSelectedMachine('Todas'); setOnlyLate(false); }}>Limpiar</button>
+          <button className="btn btn-outline-primary" onClick={fetchData}>Actualizar</button>
+        </div>
       </div>
 
-      {/* Filtros - Pasar función handleSearch */}
-      <Filters onSearch={handleSearch} />
-
-      {/* Loading indicator */}
-      {loading && (
-        <div className="text-center my-4">
-          <div className="spinner-border" role="status">
-            <span className="visually-hidden">Cargando...</span>
+      {/* KPIs */}
+      <div className="row mb-4">
+        <div className="col-md-3">
+          <div className="card text-center">
+            <div className="card-body">
+              <div className="text-muted mb-1">Solicitado</div>
+              <div style={{ fontSize: "2rem" }}>{kpi.solicitado.toLocaleString()}</div>
+              <small className="text-muted">suma de OPs filtradas</small>
+            </div>
           </div>
         </div>
-      )}
-
-      {/* Tabla - AQUI SE LLAMA AL COMPONENTE DATATABLE*/}
-      {!loading && <DataTable data={data} />}
-
-      {/* Paginación y botones inferiores */}
-      <div className="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-3">
-        <span>Mostrando {data.length} resultados</span>
-        
-        <div className="d-flex gap-2">
-          <button className="btn btn-outline-secondary">Previous</button>
-          <span className="mx-2">1 de 4</span>
-          <button className="btn btn-outline-secondary">Next</button>
+        <div className="col-md-3">
+          <div className="card text-center">
+            <div className="card-body">
+              <div className="text-muted mb-1">Programado</div>
+              <div style={{ fontSize: "2rem" }}>{kpi.programado.toLocaleString()}</div>
+            </div>
+          </div>
         </div>
-      
-       
+        <div className="col-md-3">
+          <div className="card text-center">
+            <div className="card-body">
+              <div className="text-muted mb-1">Reportado</div>
+              <div style={{ fontSize: "2rem" }}>{kpi.reportado.toLocaleString()}</div>
+            </div>
+          </div>
+        </div>
+        <div className="col-md-3">
+          <div className="card text-center">
+            <div className="card-body">
+              <div className="text-muted mb-1">Faltante</div>
+              <div style={{ fontSize: "2rem", color: "#c77d00" }}>{kpi.faltante.toLocaleString()}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Tabla principal */}
+      <div className="card p-3">
+        <div className="d-flex justify-content-between align-items-center mb-2">
+          <div className="fw-bold">Órdenes ({filteredData.length})</div>
+          <select className="form-select w-auto">
+            <option>Ordenar por prioridad</option>
+          </select>
+        </div>
+        <div className="table-responsive">
+          <table className="table table-sm table-hover align-middle">
+            <thead>
+              <tr>
+                <th>Máquina</th>
+                <th>OP</th>
+                <th>Cliente</th>
+                <th>Código</th>
+                <th>Descripción</th>
+                <th>Solicitado</th>
+                <th>Programado</th>
+                <th>Reportado</th>
+                <th>Faltante</th>
+                <th>Vencimiento</th>
+                <th>Status</th>
+                <th>Prioridad</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredData
+              //.filter(item => item.Status === "P") // <-- Solo muestra las que tengan status P
+              .map((item, idx) => (
+                <tr key={idx}>
+                  <td className="fw-bold">{item.maquina}</td>
+                  <td>{item.op}</td>
+                  <td>{item.cliente}</td>
+                  <td>{item.codigo}</td>
+                  <td>{item.descripcion}</td>
+                  <td>{item.solicitado?.toLocaleString()}</td>
+                  <td>{item.programado?.toLocaleString()}</td>
+                  <td>{item.reportado?.toLocaleString()}</td>
+                  <td
+                    style={{
+                      color: item.faltante > 0 ? '#c77d00' : item.faltante < 0 ? '#e34' : '#222',
+                      fontWeight: item.faltante !== 0 ? "bold" : "normal"
+                    }}>
+                    {item.faltante?.toLocaleString()}
+                  </td>
+                  <td>
+                    {item.vencimiento}
+                    {item.diasAtraso &&
+                      <span className="text-danger ms-2">{item.diasAtraso} días atraso</span>
+                    }
+                  </td>
+                  <td>
+                    <span className={`badge ${item.status === 'En Proceso' ? 'bg-warning text-dark' : item.status === 'No Programado' ? 'bg-secondary' : 'bg-success'}`}>
+                      {item.status}
+                    </span>
+                  </td>
+                  <td>
+                    <span className={`badge ${item.prioridad === 1 ? 'bg-success' : item.prioridad === 2 ? 'bg-warning text-dark' : 'bg-danger'}`}>
+                      {item.prioridad}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
