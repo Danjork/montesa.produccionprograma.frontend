@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import SelectMaquina from '../components/SelectMaquina';
+import '.././App.css'
 
 export default function Dashboard() {
   const [data, setData] = useState([]);
@@ -161,14 +162,15 @@ export default function Dashboard() {
 
       {/* Tabla principal */}
       <div className="card p-3">
+
         <div className="d-flex justify-content-between align-items-center mb-2">
           <div className="fw-bold">Órdenes ({filteredData.length})</div>
-          <select className="form-select w-auto">
-            <option>Ordenar por prioridad</option>
-          </select>
-        </div>
-        <div style={{ maxHeight: "350px", overflowY: "auto" }} className="table-responsive">
-          <table className="table table-sm table-hover align-middle mb-0">
+           {/* <select className="form-select w-auto">
+             <option>Ordenar por prioridad</option>
+            </select>*/}
+         </div>
+        <div style={{ maxHeight: "400px", overflowY: "auto"  }} >
+          <table className="table table-sm table-hover align-middle mb-0 sticky-header">
             <thead>
               <tr>
                 <th>Máquina</th>
