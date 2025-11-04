@@ -23,21 +23,18 @@ export default function Dashboard() {
     const maquinasUnicas = Array.from(new Set(response.data.map(item => item.maquina).filter(Boolean))).sort();
     setMaquinas(maquinasUnicas);
 
-    // Calcula los KPIs usando los datos (debes ajustar nombres según tu API)
-    let solicitado = 0, programado = 0, reportado = 0, faltante = 0;
+    {/*// Calcula los KPIs usando los datos (debes ajustar nombres según tu API)
+    const solicitado = 0, programado = 0, reportado = 0, faltante = 0;
     response.data.forEach(item => {
       solicitado += +item.solicitado || 0;
       programado += +item.programado || 0;
       reportado += +item.reportado || 0;
       faltante += +item.faltante || 0;
     });
-    setKpi({ solicitado, programado, reportado, faltante });
-  };
+    setKpi({ solicitado, programado, reportado, faltante });*/}
 
-  const handleSearch = (e) => {
-    setQuery(e.target.value);
   };
-
+  // Aquí los datos filtrados según los buscadores y selects
   const filteredData = data.filter(item =>
     (query === '' || item.cliente?.toLowerCase().includes(query.toLowerCase()) ||
       item.op?.toString().includes(query) ||
@@ -46,7 +43,45 @@ export default function Dashboard() {
     (!onlyLate || (item.faltante > 0 && item.vencimiento && new Date(item.vencimiento) < new Date()))
   );
 
+  // Calcula los KPIs en base a filteredData (filtrado actual)
+  const solicitado = filteredData.reduce((acc, item) => acc + (+item.solicitado || 0), 0);
+  const programado = filteredData.reduce((acc, item) => acc + (+item.programado || 0), 0);
+  const reportado = filteredData.reduce((acc, item) => acc + (+item.reportado || 0), 0);
+  const faltante = filteredData.reduce((acc, item) => acc + (+item.faltante || 0), 0);
+
+
+
+
+  const handleSearch = (e) => {
+    setQuery(e.target.value);
+  };
+
+  function getVencimientoCell(item) {
+    if (!item.vencimiento) return "";
+    const fechaVenc = new Date(item.vencimiento.split('/').reverse().join('-')); // asume DD/MM/YYYY
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    fechaVenc.setHours(0, 0, 0, 0);
+    const dias = Math.floor((now - fechaVenc) / 86400000);
+    if (dias > 0) {
+      return (
+        <span>
+          <span className="badge bg-light text-danger border border-danger me-2">{item.vencimiento}</span>
+          <span className="text-danger small">{dias} días atraso</span>
+        </span>
+      );
+    }
+    return (
+      <>
+        <span className="badge bg-light text-secondary border">{item.vencimiento}</span>
+        <span className="text-muted small ms-2">{Math.abs(dias)} días</span>
+      </>
+    );
+  }
+
+
   return (
+
     <div style={{ padding: '2rem' }}>
       <h1>Programa de Producción • Dashboard</h1>
       <p className="text-muted mb-4">Vista rápida de OPs por máquina, vencimientos y estado.</p>
@@ -61,14 +96,7 @@ export default function Dashboard() {
             onChange={handleSearch}
           />
         </div>
-        {/*   <div className="col-md-4">
-          <select className="form-select" value={selectedMachine} onChange={e => setSelectedMachine(e.target.value)}>
-            <option>Todas las máquinas</option>
-            <option>Extrusora 1</option>
-            <option>Extrusora 12</option>
-            <option>Extrusora 11</option>
-          </select>
-        </div>*/}
+
 
 
         <div className="col-md-4">
@@ -100,8 +128,8 @@ export default function Dashboard() {
           <div className="card text-center">
             <div className="card-body">
               <div className="text-muted mb-1">Solicitado</div>
-              <div style={{ fontSize: "2rem" }}>{kpi.solicitado.toLocaleString()}</div>
-              <small className="text-muted">suma de OPs filtradas</small>
+              <div style={{ fontSize: "2rem" }}>{solicitado.toLocaleString()}</div>
+             {/* <small className="text-muted">suma de OPs filtradas</small>*/} 
             </div>
           </div>
         </div>
@@ -109,7 +137,7 @@ export default function Dashboard() {
           <div className="card text-center">
             <div className="card-body">
               <div className="text-muted mb-1">Programado</div>
-              <div style={{ fontSize: "2rem" }}>{kpi.programado.toLocaleString()}</div>
+              <div style={{ fontSize: "2rem" , color: "#00c732ff"}}>{programado.toLocaleString()}</div>
             </div>
           </div>
         </div>
@@ -117,7 +145,7 @@ export default function Dashboard() {
           <div className="card text-center">
             <div className="card-body">
               <div className="text-muted mb-1">Reportado</div>
-              <div style={{ fontSize: "2rem" }}>{kpi.reportado.toLocaleString()}</div>
+              <div style={{ fontSize: "2rem", color: "#c77d00" }}>{reportado.toLocaleString()}</div>
             </div>
           </div>
         </div>
@@ -125,7 +153,7 @@ export default function Dashboard() {
           <div className="card text-center">
             <div className="card-body">
               <div className="text-muted mb-1">Faltante</div>
-              <div style={{ fontSize: "2rem", color: "#c77d00" }}>{kpi.faltante.toLocaleString()}</div>
+              <div style={{ fontSize: "2rem", color: "#c71700ff" }}>{faltante.toLocaleString()}</div>
             </div>
           </div>
         </div>
@@ -139,8 +167,8 @@ export default function Dashboard() {
             <option>Ordenar por prioridad</option>
           </select>
         </div>
-        <div className="table-responsive">
-          <table className="table table-sm table-hover align-middle">
+        <div style={{ maxHeight: "350px", overflowY: "auto" }} className="table-responsive">
+          <table className="table table-sm table-hover align-middle mb-0">
             <thead>
               <tr>
                 <th>Máquina</th>
@@ -159,42 +187,43 @@ export default function Dashboard() {
             </thead>
             <tbody>
               {filteredData
-              //.filter(item => item.Status === "P") // <-- Solo muestra las que tengan status P
-              .map((item, idx) => (
-                <tr key={idx}>
-                  <td className="fw-bold">{item.maquina}</td>
-                  <td>{item.op}</td>
-                  <td>{item.cliente}</td>
-                  <td>{item.codigo}</td>
-                  <td>{item.descripcion}</td>
-                  <td>{item.solicitado?.toLocaleString()}</td>
-                  <td>{item.programado?.toLocaleString()}</td>
-                  <td>{item.reportado?.toLocaleString()}</td>
-                  <td
-                    style={{
-                      color: item.faltante > 0 ? '#c77d00' : item.faltante < 0 ? '#e34' : '#222',
-                      fontWeight: item.faltante !== 0 ? "bold" : "normal"
-                    }}>
-                    {item.faltante?.toLocaleString()}
-                  </td>
-                  <td>
-                    {item.vencimiento}
-                    {item.diasAtraso &&
-                      <span className="text-danger ms-2">{item.diasAtraso} días atraso</span>
-                    }
-                  </td>
-                  <td>
-                    <span className={`badge ${item.status === 'En Proceso' ? 'bg-warning text-dark' : item.status === 'No Programado' ? 'bg-secondary' : 'bg-success'}`}>
-                      {item.status}
-                    </span>
-                  </td>
-                  <td>
-                    <span className={`badge ${item.prioridad === 1 ? 'bg-success' : item.prioridad === 2 ? 'bg-warning text-dark' : 'bg-danger'}`}>
-                      {item.prioridad}
-                    </span>
-                  </td>
-                </tr>
-              ))}
+                //.filter(item => item.Status === "P") // <-- Solo muestra las que tengan status P
+                .map((item, idx) => (
+                  <tr key={idx}>
+                    <td className="fw-semibold">{item.maquina}</td>
+                    <td>{item.op}</td>
+                    <td>{item.cliente}</td>
+                    <td>{item.codigo}</td>
+                    <td style={{ maxWidth: 180 }} className="text-truncate">{item.descripcion}</td>
+                    <td className="text-end">{(+item.solicitado || 0).toLocaleString()}</td>
+                    <td className="text-end">{(+item.programado || 0).toLocaleString()}</td>
+                    <td className="text-end">{(+item.reportado || 0).toLocaleString()}</td>
+                    <td className={`text-end fw-bold ${item.faltante > 0 ? 'text-warning' : item.faltante < 0 ? 'text-danger' : ''}`}>
+                      {(+item.faltante || 0).toLocaleString()}
+                    </td>
+                    <td className="text-center fw-bold" style={{ whiteSpace: 'nowrap' }}>
+                      {getVencimientoCell(item)}
+                    </td>
+                    <td className="text-center">
+                      <span className={
+                        "badge px-2 py-1 " +
+                        (item.status === "P"
+                          ? "bg-success"
+                          : "bg-secondary")
+                      }>
+                        {item.status}
+                      </span>
+                    </td>
+                    <td className="text-center">
+                      <span className={`
+                       badge rounded-pill 
+                        ${item.prioridad === 1 ? "bg-success" :
+                          item.prioridad === 2 ? "bg-warning text-dark" : "bg-danger"} `}>
+                        {item.prioridad}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
