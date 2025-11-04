@@ -1,85 +1,80 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import api from '../services/api';
-import Filters from '../components/Filtros';
 import FiltroMaquina from '../components/FiltroMaquina';
-import DataTable from '../components/DataTable';
 
-export default function Dashboard() {
+import maquinasTest from '../../public/data/maquinasTest.json';
+
+
+// para probar, carga el mock al state de entrada (sin llamar API)
+
+
+//import TablaDashboard from '../components/TablaDashboard'; // si usas tabla como componente
+
+export default function Maquinas() {
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [query, setQuery] = useState('');
+  const [selectedMachine, setSelectedMachine] = useState('Todas');
+  const [onlyLate, setOnlyLate] = useState(false);
+  const [maquinas, setMaquinas] = useState([]);
+  const [selectedArea, setSelectedArea] = useState('Todas');
+ 
+  useEffect(() => {
+  fetch('/data/maquinasTest.json')
+    .then(res => res.json())
+    .then(data => setData(data));
+}, []);
+
+
 
   useEffect(() => {
-    // Carga inicial de datos (opcional)
     fetchData();
   }, []);
 
   const fetchData = async () => {
-    try {
-      setLoading(true);
-      const response = await api.get('/Prod_Programa', { params: { top: 100 } });
-      setData(response.data);
-    } catch (error) {
-      console.error('Error al cargar datos', error);
-    } finally {
-      setLoading(false);
-    }
+    const response = await api.get('/Prod_Programa', { params: { top: 200 } });
+    setData(response.data);
+    const maquinasUnicas = Array.from(new Set(response.data.map(item => item.maquina).filter(Boolean))).sort();
+    setMaquinas(maquinasUnicas);
+
+
   };
 
-  // Función de búsqueda que será llamada desde Filters
-  const handleSearch = async (searchParams) => {
-    try {
-      setLoading(true);
-      
-      // Llamada POST al endpoint de búsqueda
-      const response = await api.post('/Prod_Programa/buscar-sp', {
-        ordNo: searchParams.ordNo
-      });
-      
-      setData(response.data);
-      console.log('Búsqueda exitosa:', response.data);
-    } catch (error) {
-      console.error('Error al buscar:', error);
-      alert('Error al buscar la orden. Verifique el número e intente nuevamente.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const onClear = () => { setQuery(''); setSelectedMachine('Todas'); setOnlyLate(false); };
+const areasUnicas = Array.from(new Set(data.map(item => item.Area).filter(Boolean))).sort();
+
+  // Filtro de datos igual que en dashboard
+  const filteredData = data.filter(item =>
+    (query === '' || item.cliente?.toLowerCase().includes(query.toLowerCase()) ||
+     item.op?.toString().includes(query) ||
+     item.codigo?.toLowerCase().includes(query.toLowerCase())) &&
+    (selectedMachine === 'Todas' || item.maquina === selectedMachine) &&
+    (selectedArea === 'Todas' || item.Area === selectedArea) &&
+    (!onlyLate || (item.faltante > 0 && item.vencimiento && new Date(item.vencimiento) < new Date()))
+  );
+
+ 
+
 
   return (
-     <div className="p-4" style={{ width: '100%' }}>
-      {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1>Maquina</h1>
-      
-      </div>
-
-      {/* Filtros-Components - Pasar función handleSearch */}
-      <FiltroMaquina onSearch={handleSearch} />
-
-      {/* Loading indicator */}
-      {loading && (
-        <div className="text-center my-4">
-          <div className="spinner-border" role="status">
-            <span className="visually-hidden">Cargando...</span>
-          </div>
-        </div>
-      )}
-
-      {/* Tabla */}
-      {!loading && <DataTable data={data} />}
-
-      {/* Paginación y botones inferiores */}
-      <div className="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-3">
-        <span>Mostrando {data.length} resultados</span>
-        
-        <div className="d-flex gap-2">
-          <button className="btn btn-outline-secondary">Previous</button>
-          <span className="mx-2">1 de 4</span>
-          <button className="btn btn-outline-secondary">Next</button>
-        </div>
-      
-       
-      </div>
+    <div style={{ padding: '2rem' }}>
+      <h1>Maquinas</h1>
+       <FiltroMaquina
+  query={query}
+  onQueryChange={setQuery}
+  selectedMachine={selectedMachine}
+  maquinas={maquinas}
+  onSelectMachine={setSelectedMachine}
+  onlyLate={onlyLate}
+  onOnlyLateChange={setOnlyLate}
+  onClear={onClear}
+  onRefresh={() => setData(maquinasTest)}
+  // ¡ESTE PÁRRAFO ES CLAVE!
+  selectedArea={selectedArea}
+  setSelectedArea={setSelectedArea}
+  areasUnicas={areasUnicas}
+/>
+      {/* Reutiliza DataTable o tu tabla según el caso 
+      <TablaDashboard data={filteredData} />*/}
     </div>
   );
 }

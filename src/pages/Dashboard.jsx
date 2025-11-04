@@ -24,16 +24,6 @@ export default function Dashboard() {
     const maquinasUnicas = Array.from(new Set(response.data.map(item => item.maquina).filter(Boolean))).sort();
     setMaquinas(maquinasUnicas);
 
-    {/*// Calcula los KPIs usando los datos (debes ajustar nombres según tu API)
-    const solicitado = 0, programado = 0, reportado = 0, faltante = 0;
-    response.data.forEach(item => {
-      solicitado += +item.solicitado || 0;
-      programado += +item.programado || 0;
-      reportado += +item.reportado || 0;
-      faltante += +item.faltante || 0;
-    });
-    setKpi({ solicitado, programado, reportado, faltante });*/}
-
   };
   // Aquí los datos filtrados según los buscadores y selects
   const filteredData = data.filter(item =>
