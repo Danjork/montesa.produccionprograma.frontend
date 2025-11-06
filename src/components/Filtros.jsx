@@ -72,9 +72,6 @@ export default function Filters({ onSearch }) {
             />
           </div>
 
-      
-     
-
           {/* Botón Buscar */}
           <div className="col-md-2 d-flex align-items-end">
             <button type="submit" className="btn btn-primary w-100">

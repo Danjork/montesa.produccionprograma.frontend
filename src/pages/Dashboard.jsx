@@ -74,23 +74,28 @@ export default function Dashboard() {
   return (
 
     <div style={{ padding: '2rem' }}>
-      <h1>Programa de Producción • Dashboard</h1>
+      <h1>Produccion por Proceso</h1>
       <p className="text-muted mb-4">Vista rápida de OPs por máquina, vencimientos y estado.</p>
 
       {/* Filtros principales */}
       <div className="row g-3 align-items-end mb-4">
-        <div className="col-md-4">
+        <div className="col-md-3">
           <input
             className="form-control"
-            placeholder="Buscar por Cliente / OP / Código..."
+            placeholder="Buscar por OP ..."
             value={query}
             onChange={handleSearch}
           />
+        </div> 
+         <div className="col-md-3">
+          <SelectMaquina
+            maquinas={maquinas}
+            selected={selectedMachine}
+            onChange={e => setSelectedMachine(e.target.value)}
+          />
         </div>
 
-
-
-        <div className="col-md-4">
+        <div className="col-md-3">
           <SelectMaquina
             maquinas={maquinas}
             selected={selectedMachine}
@@ -120,7 +125,7 @@ export default function Dashboard() {
             <div className="card-body">
               <div className="text-muted mb-1">Solicitado</div>
               <div style={{ fontSize: "2rem" }}>{solicitado.toLocaleString()}</div>
-             {/* <small className="text-muted">suma de OPs filtradas</small>*/} 
+              {/* <small className="text-muted">suma de OPs filtradas</small>*/}
             </div>
           </div>
         </div>
@@ -128,7 +133,7 @@ export default function Dashboard() {
           <div className="card text-center">
             <div className="card-body">
               <div className="text-muted mb-1">Programado</div>
-              <div style={{ fontSize: "2rem" , color: "#00c732ff"}}>{programado.toLocaleString()}</div>
+              <div style={{ fontSize: "2rem", color: "#00c732ff" }}>{programado.toLocaleString()}</div>
             </div>
           </div>
         </div>
@@ -154,12 +159,12 @@ export default function Dashboard() {
       <div className="card p-3">
 
         <div className="d-flex justify-content-between align-items-center mb-2">
-          <div className="fw-bold">Órdenes ({filteredData.length})</div>
-           {/* <select className="form-select w-auto">
+          <div className="fw-bold">Órdenes en Prioridad ({filteredData.length})</div>
+          {/* <select className="form-select w-auto">
              <option>Ordenar por prioridad</option>
             </select>*/}
-         </div>
-        <div style={{ maxHeight: "400px", overflowY: "auto"  }} >
+        </div>
+        <div style={{ maxHeight: "400px", overflowY: "auto" }} >
           <table className="table table-sm table-hover align-middle mb-0 sticky-header">
             <thead>
               <tr>
@@ -220,6 +225,7 @@ export default function Dashboard() {
           </table>
         </div>
       </div>
+
     </div>
   );
 }

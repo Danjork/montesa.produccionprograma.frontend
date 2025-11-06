@@ -3,7 +3,7 @@ import api from '../services/api';
 import Filters from '../components/Filtros';
 import DataTable from '../components/DataTable';
 
-export default function Carga() {
+export default function Planificador() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
 

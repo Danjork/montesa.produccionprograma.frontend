@@ -4,9 +4,9 @@ import DashboardLayout from './components/Layout/DashboardLayout';
 import Dashboard from './pages/Dashboard';
 import Orders from './pages/Orders';
 import Products from './pages/Products';
-import Maquinas from './pages/Maquinas';
+import Programa from './pages/Programa';
 import Reports from './pages/Reports';
-import Carga from './pages/Carga';
+import Planificador from './pages/Planificador';
 
 
 function App() {
@@ -15,10 +15,10 @@ function App() {
        <Route path="/" element={<DashboardLayout />}>
         <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
-        <Route path="carga" element={<Carga />} />
+        <Route path="planificador" element={<Planificador />} />
         <Route path="orders" element={<Orders />} />
         <Route path="products" element={<Products />} />
-        <Route path="maquinas" element={<Maquinas />} />
+        <Route path="programa" element={<Programa />} />
         <Route path="reports" element={<Reports />} />
         <Route path="reports/:reportId" element={<Reports />} />
       </Route>

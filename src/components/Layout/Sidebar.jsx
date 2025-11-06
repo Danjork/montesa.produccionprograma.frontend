@@ -1,13 +1,13 @@
 import { Link, useLocation } from 'react-router-dom';
-import { MdDashboard, MdInventory, MdPeople, MdAssessment, MdIntegrationInstructions, MdSettings, MdLogout } from 'react-icons/md'
+import { MdDashboard, MdInventory,MdLibraryBooks,MdAssignment, MdPeople, MdAssessment, MdIntegrationInstructions, MdSettings, MdLogout } from 'react-icons/md'
 
 export default function Sidebar() {
   const location = useLocation();
 
   const menuItems = [
     { path: '/dashboard', icon: <MdDashboard />, label: 'Dashboard' },
-     { path: '/carga', icon: <MdDashboard />, label: 'Carga' },
-    {path: '/maquinas', icon: <MdInventory  />, label:'Maquinas'},
+     { path: '/planificador', icon: <MdAssignment />, label: 'Planificador' },
+    {path: '/programa', icon: <MdLibraryBooks  />, label:'Programa'},
     { path: '/orders', icon: '📋', label: 'Orders' },
     { path: '/products', icon: '🛒', label: 'Products' },
     
